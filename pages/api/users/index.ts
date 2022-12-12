@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import  db  from '../../../db/connection.js';
+import  db  from '../../../db/connection';
 
 export default async function handleUsers(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {
