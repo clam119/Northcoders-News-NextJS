@@ -1,4 +1,6 @@
-module.exports = [
+import { Topic } from "../../../ts-interfaces/utilsInterface";
+
+const topics: Topic[] = [
   {
     description: 'The man, the Mitch, the legend',
     slug: 'mitch'
@@ -12,3 +14,5 @@ module.exports = [
     slug: 'paper'
   }
 ];
+
+export default topics;
