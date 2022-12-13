@@ -1,4 +1,4 @@
-module.exports = [
+const articles = [
   {
     title: "Running a Node App",
     topic: "coding",
@@ -291,3 +291,5 @@ module.exports = [
     votes: 0,
   },
 ];
+
+export default articles;

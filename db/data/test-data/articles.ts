@@ -1,4 +1,4 @@
-module.exports = [
+const articles = [
   {
     title: "Living in the shadow of a great man",
     topic: "mitch",
@@ -96,3 +96,5 @@ module.exports = [
     votes: 0,
   },
 ];
+
+export default articles;

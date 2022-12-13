@@ -1,4 +1,6 @@
-module.exports = [
+import { User } from "../../../ts-interfaces/utilsInterface";
+
+const users: User[] = [
   {
     username: 'butter_bridge',
     name: 'jonny',
@@ -22,3 +24,5 @@ module.exports = [
       'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
   }
 ];
+
+export default users;

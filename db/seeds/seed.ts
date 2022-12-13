@@ -1,12 +1,9 @@
-const format = require('pg-format');
-const db = require('../connection');
-const {
-  convertTimestampToDate,
-  createRef,
-  formatComments,
-} = require('./utils');
+import format from 'pg-format';
+import db from '../connection'
+import { User, Topic, Article, Comment } from '../../ts-interfaces/utilsInterface';
+import { convertTimestampToDate, createRef, formatComments } from './utils';
 
-const seed = async ({ topicData, userData, articleData, commentData }) => {
+const seed = async ({ topicData, userData, articleData, commentData }: { topicData: any, userData: any, articleData: any, commentData: any;}) => {
   await db.query(`DROP TABLE IF EXISTS comments;`);
   await db.query(`DROP TABLE IF EXISTS articles;`);
   await db.query(`DROP TABLE IF EXISTS users;`);
@@ -50,15 +47,15 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
 
   const insertTopicsQueryStr = format(
     'INSERT INTO topics (slug, description) VALUES %L RETURNING *;',
-    topicData.map(({ slug, description }) => [slug, description])
+    topicData.map(({ slug, description }: { slug: string, description: string}) => [slug, description])
   );
   const topicsPromise = db
     .query(insertTopicsQueryStr)
-    .then((result) => result.rows);
+    .then((result: any) => result.rows);
 
   const insertUsersQueryStr = format(
     'INSERT INTO users ( username, name, avatar_url) VALUES %L RETURNING *;',
-    userData.map(({ username, name, avatar_url }) => [
+    userData.map(({ username, name, avatar_url }: { username: string, name: string, avatar_url: string}) => [
       username,
       name,
       avatar_url,
@@ -66,15 +63,15 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
   );
   const usersPromise = db
     .query(insertUsersQueryStr)
-    .then((result) => result.rows);
+    .then((result: any) => result.rows);
 
   await Promise.all([topicsPromise, usersPromise]);
 
-  const formattedArticleData = articleData.map(convertTimestampToDate);
+  const formattedArticleData: any = articleData.map(convertTimestampToDate);
   const insertArticlesQueryStr = format(
     'INSERT INTO articles (title, topic, author, body, created_at, votes) VALUES %L RETURNING *;',
     formattedArticleData.map(
-      ({ title, topic, author, body, created_at, votes = 0 }) => [
+      ({ title, topic, author, body, created_at, votes = 0 }: { title: string, topic: string, body: string, author: string, created_at: string, votes: number}) => [
         title,
         topic,
         author,
@@ -87,7 +84,7 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
 
   const articleRows = await db
     .query(insertArticlesQueryStr)
-    .then((result) => result.rows);
+    .then((result: any) => result.rows);
 
   const articleIdLookup = createRef(articleRows, 'title', 'article_id');
   const formattedCommentData = formatComments(commentData, articleIdLookup);
@@ -104,7 +101,7 @@ const seed = async ({ topicData, userData, articleData, commentData }) => {
       ]
     )
   );
-  return db.query(insertCommentsQueryStr).then((result) => result.rows);
+  return db.query(insertCommentsQueryStr).then((result: any) => result.rows);
 };
 
-module.exports = seed;
+export default seed;

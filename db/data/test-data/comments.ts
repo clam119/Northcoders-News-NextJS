@@ -1,4 +1,4 @@
-module.exports = [
+const comments = [
   {
     body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
     votes: 16,
@@ -126,3 +126,5 @@ module.exports = [
     created_at: 1595294400000,
   },
 ];
+
+export default comments;
