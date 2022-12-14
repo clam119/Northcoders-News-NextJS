@@ -1,4 +1,4 @@
-import { User } from "../../../ts-interfaces/utilsInterface";
+import { User } from "../../../lib/utilsInterface";
 
 const users: User[] = [
   {

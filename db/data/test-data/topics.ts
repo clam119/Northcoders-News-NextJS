@@ -1,4 +1,4 @@
-import { Topic } from "../../../ts-interfaces/utilsInterface";
+import { Topic } from "../../../lib/utilsInterface";
 
 const topics: Topic[] = [
   {

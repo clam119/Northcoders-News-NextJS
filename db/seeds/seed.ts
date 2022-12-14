@@ -1,6 +1,6 @@
 import format from 'pg-format';
 import db from '../connection'
-import { User, Topic, Article, Comment } from '../../ts-interfaces/utilsInterface';
+import { User, Topic, Article, Comment } from '../../lib/utilsInterface';
 import { convertTimestampToDate, createRef, formatComments } from './utils';
 
 const seed = async ({ topicData, userData, articleData, commentData }: { topicData: any, userData: any, articleData: any, commentData: any;}) => {
