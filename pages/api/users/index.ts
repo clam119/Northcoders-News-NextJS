@@ -1,13 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import  db  from '../../../db/connection';
+import { getAllUsers } from "../../../controllers/users/getAllUsers";
 
 export default async function handleUsers(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {
         case 'GET':
-            const queryData = await db.query('SELECT * FROM users;');
-            const { rows: allUsersData } = queryData;
-            res.status(200)
-            .send(allUsersData)
+            try {
+                return  getAllUsers(req, res);
+            }
+            catch(err) {
+                console.log(err)
+            }
             break;
         default: 
             res.status(500).json({msg: 'Bad Request.'})
