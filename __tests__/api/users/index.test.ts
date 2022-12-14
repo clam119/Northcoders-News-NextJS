@@ -1,7 +1,7 @@
 import handleUsers from '../../../pages/api/users/index';
 import db from '../../../db/connection';
 import { createMocks } from 'node-mocks-http';
-import User from '../../../ts-interfaces/usersInterface'
+import User from '../../../lib/usersInterface';
 
 afterAll(() => db.end())
 
@@ -54,4 +54,34 @@ describe('GET /api/users', () => {
         expect(badRequestMessage).toEqual({msg: 'Bad Request.'})
     })
 
+})
+
+describe('POST /api/users', () => {
+    it('Should return a status code of 201 if a successful POST request is made.', async() => {
+        // Create Mock Req & Res to /api/users
+        const newUser: User = { username: 'clam119', name: 'Christopher Lam', avatar_url: 'https://i.ibb.co/M2nHQSC/me-and-best-mates.jpg'}
+        const { req, res } = createMocks({
+            method: 'GET',
+            body:  newUser
+        })
+        // Wait for the handleUsers Function to resolve with the designated POST request & check code
+        await handleUsers(req, res);
+        const responseStatusCode =  res._getStatusCode();
+        expect(responseStatusCode).toBe(201);
+    })
+
+    it('Should return an object containing the new user that was successfully posted.', async() => {
+        const newUser: User = { username: 'clam119', name: 'Christopher Lam', avatar_url: 'https://i.ibb.co/M2nHQSC/me-and-best-mates.jpg'}
+        const { req, res } = createMocks({
+            method: 'GET',
+            body:  newUser
+        })
+        await handleUsers(req, res);
+        const responseData = res._getData();
+        expect(responseData).toMatchObject({
+            username: 'clam119',
+            name: 'Christopher Lam',
+            avatar_url: 'https://i.ibb.co/M2nHQSC/me-and-best-mates.jpg'
+        })
+    })
 })
