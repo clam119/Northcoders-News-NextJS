@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { fetchAllUsers, createNewUser } from "../models/users-model";
+import User from "../lib/usersInterface";
 
 export async function getAllUsers(req: NextApiRequest, res: NextApiResponse) {
     const allUsersData = await fetchAllUsers();
@@ -13,7 +14,7 @@ export async function getAllUsers(req: NextApiRequest, res: NextApiResponse) {
 }
 
 export async function postNewUser(req: NextApiRequest, res: NextApiResponse) {
-    const { username, name, avatar_url } = req.body;
+    const { username, name, avatar_url }: User = req.body;
     const postedUser = await createNewUser(username, name, avatar_url);
     try {
         res.status(201)
