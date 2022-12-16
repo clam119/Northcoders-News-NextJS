@@ -1,13 +1,13 @@
-import handleUsers from '../../../pages/api/users/index';
-import db from '../../../db/connection';
 import { createMocks } from 'node-mocks-http';
-import User from '../../../lib/usersInterface';
-import seed from '../../../db/seeds/seed';
-import testData from '../../../db/data/test-data';
+import seed from '../../db/seeds/seed';
+import testData from '../../db/data/test-data';
+import db from '../../db/connection';
+import handleSingleUser from '../../pages/api/users/[username]';
+import handleUsers from '../../pages/api/users/index';
+import User from '../../lib/usersInterface';
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());
-
 
 describe('GET /api/users', () => {
 
@@ -56,6 +56,73 @@ describe('GET /api/users', () => {
         const badRequestMessage = JSON.parse(res._getData());
         expect(responseStatusCode).toBe(500);
         expect(badRequestMessage).toEqual({msg: 'Bad Request.'})
+    })
+
+})
+
+describe('GET /api/users/[username]', () => {
+
+    it('Should return a status code of 200 if a successful GET request is made with a valid username.', async() => {
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { username: 'lurker'}
+        })
+        await handleSingleUser(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    it('Should return an user object if a successful GET request is made with a valid username.', async() => {
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { username: 'lurker'}
+        })
+        await handleSingleUser(req, res);
+        const responseData = res._getData();
+        expect(responseData).toEqual({
+            username: 'lurker',
+            name: 'do_nothing',
+            avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png'
+        })
+    })
+
+    it('Should return a status code of 400 if an invalid type is passed in the username field.', async() => {
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { username: 123456789 }
+        })
+        try {
+            await handleSingleUser(req, res);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(400);
+            expect(msg).toBe('Invalid Fields Data')
+        }
+    })
+    
+    it('Should return a status code of 404 if an invalid username is passed in.', async() => {
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { username: 'nonExistentUsername123'}
+        })
+        try {
+            await handleSingleUser(req, res);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404)
+            expect(msg).toBe('Username Not Found');
+        }
+    })
+
+    it('Should return a default status code of 500 if an unsupported HTTP method is invoked.', async() => {
+        const { req, res } = createMocks({
+            method: 'PUT'
+        })
+        await handleSingleUser(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(500);
     })
 
 })
@@ -124,4 +191,4 @@ describe('POST /api/users', () => {
     })
 })
 
-
+export {}
