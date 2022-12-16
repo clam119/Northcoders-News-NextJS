@@ -1,10 +1,6 @@
 import db from "../db/connection";
 import User from "../lib/usersInterface";
-
-export interface Error {
-    status: number,
-    msg: string
-}
+import Error from "../lib/errorInterface";
 
 export async function fetchSingleUser(username: string): Promise <User | Error> {
     const usernameQuery = await db.query('SELECT * FROM users;')
