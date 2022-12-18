@@ -1,5 +1,5 @@
-import ConvertTimeStampToDate from '../../lib/utilsInterface'
-import { Comments, CreateRef, Article, Comment } from '../../lib/utilsInterface'
+import ConvertTimeStampToDate from '@lib/utilsInterface'
+import { Comments, CreateRef, Article, Comment } from '@lib/utilsInterface'
 
 export const convertTimestampToDate = ({ created_at, ...otherProperties }: ConvertTimeStampToDate ) => {
   if (!created_at) return { ...otherProperties };

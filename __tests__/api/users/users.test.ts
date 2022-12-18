@@ -1,10 +1,10 @@
 import { createMocks } from 'node-mocks-http';
-import seed from '../../../db/seeds/seed';
-import testData from '../../../db/data/test-data';
-import db from '../../../db/connection';
-import handleSingleUser from '../../../pages/api/users/[username]';
-import handleUsers from '../../../pages/api/users/index';
-import User from '../../../lib/usersInterface';
+import seed from "@db/seeds/seed"
+import testData from "@db/data/test-data"
+import db from "@db/connection"
+import handleSingleUser from "@pages/api/users/[username]"
+import handleUsers from "@pages/api/users/index"
+import User from "@lib/usersInterface"
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());

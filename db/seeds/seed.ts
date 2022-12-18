@@ -1,7 +1,7 @@
 import format from 'pg-format';
-import db from '../connection'
-import { User, Topic, Article, Comment } from '../../lib/utilsInterface';
-import { convertTimestampToDate, createRef, formatComments } from './utils';
+import db from "@db/connection"
+import { User, Topic, Article, Comment } from "@lib/utilsInterface"
+import { convertTimestampToDate, createRef, formatComments } from "@db/seeds/utils"
 
 const seed = async ({ topicData, userData, articleData, commentData }: { topicData: any, userData: any, articleData: any, commentData: any;}) => {
   await db.query(`DROP TABLE IF EXISTS comments;`);

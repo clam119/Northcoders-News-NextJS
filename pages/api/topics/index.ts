@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAllTopics, postNewTopic } from '../../../controllers/topics-controller';
+import { getAllTopics, postNewTopic } from '@controllers/topics-controller'
 
 export default async function handleTopics(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {

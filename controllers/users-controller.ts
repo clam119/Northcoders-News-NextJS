@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { fetchAllUsers, createNewUser, fetchSingleUser } from "../models/users-model";
+import { fetchAllUsers, createNewUser, fetchSingleUser } from "@models/users-model";
 import User from "../lib/usersInterface";
 
 export async function getAllUsers(req: NextApiRequest, res: NextApiResponse) {
