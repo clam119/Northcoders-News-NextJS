@@ -1,9 +1,9 @@
 import { createMocks } from 'node-mocks-http';
-import seed from '../../../db/seeds/seed';
-import testData from '../../../db/data/test-data';
-import db from '../../../db/connection';
-import handleTopics from '../../../pages/api/topics/index';
-import Topic from '../../../lib/topicsInterface';
+import seed from "@db/seeds/seed"
+import testData from "@db/data/test-data"
+import db from "@db/connection"
+import Topic from "@lib/topicsInterface"
+import handleTopics from "@pages/api/topics/index"
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());

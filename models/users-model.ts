@@ -1,6 +1,6 @@
-import db from "../db/connection";
-import User from "../lib/usersInterface";
-import Error from "../lib/errorInterface";
+import db from "@db/connection";
+import User from "@lib/usersInterface";
+import Error from "@lib/errorInterface";
 
 export async function fetchSingleUser(username: string): Promise <User | Error> {
     const usernameQuery = await db.query('SELECT * FROM users;')

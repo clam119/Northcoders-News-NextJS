@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { fetchAllTopics, createNewTopic } from "../models/topics-model";
+import { fetchAllTopics, createNewTopic } from "@models/topics-model";
 import Topic from "../lib/topicsInterface";
 
 export async function getAllTopics(req: NextApiRequest, res: NextApiResponse) {

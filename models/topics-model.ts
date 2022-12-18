@@ -1,6 +1,5 @@
-import db from "../db/connection";
-import Topic from "../lib/topicsInterface";
-import Error from "../lib/errorInterface";
+import db from "@db/connection";
+import Topic from "@lib/topicsInterface";
 
 export async function fetchAllTopics() {
     const queryData = await db.query('SELECT * FROM topics');

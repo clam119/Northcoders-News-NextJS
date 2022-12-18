@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAllUsers, postNewUser } from "../../../controllers/users-controller";
+import { getAllUsers, postNewUser } from "@controllers/users-controller";
 
 export default async function handleUsers(req: NextApiRequest, res: NextApiResponse) {
     switch(req.method) {
