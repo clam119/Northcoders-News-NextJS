@@ -64,3 +64,66 @@ describe('GET /api/articles/[article_id]/comments', () => {
     })
 
 }) 
+
+describe('POST /api/articles/[article_id/comments', () => {
+    
+    it('Should return a status code of 201 if a succesful POST request is made.', async() => {
+        const newComment: Comment = { username: 'butter_bridge',  body: 'A successful POST request!' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            query: { article_id: 1 },
+            body: newComment
+        }) 
+        await handleArticleComments(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(201);
+    })
+
+    it('Should return the posted comment back to the user upon a successful POST request.', async() => {
+        const newComment: Comment = { username: 'butter_bridge', body: 'A successful POST request made in article 2!' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            query: { article_id: 2 },
+            body: newComment
+        })
+        // Currently the .getData() function only returns the body but in a real POST request returns the entire object
+        await handleArticleComments(req, res);
+        const responseData = res._getData();
+        expect(responseData).toBe('A successful POST request made in article 2!')
+    })
+
+    it('Should return a status code of 400 if any of the fields are an invalid data type', async() => {
+        const newInvalidComment = { username: 123, body: 121 };
+        const { req, res } = createMocks({
+            method: 'POST',
+            query: { article_id: 3 },
+            body: newInvalidComment
+        })
+        try {
+            await handleArticleComments(req, res);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(400);
+            expect(msg).toBe("Invalid Fields Data")
+        }
+    })
+
+    it('Should return a status code of 404 if any of the fields are missing', async() => {
+        const newInvalidComment = {};
+        const { req, res } = createMocks({
+            method: 'POST',
+            query: { article_id: 4 },
+            body: newInvalidComment
+        })
+        try {
+            await handleArticleComments(req, res);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe("Missing Required Fields")
+        }
+    })
+
+})
