@@ -1,8 +1,9 @@
 export default interface Comment {
-    comment_id: string,
+    comment_id?: string,
+    votes?: number,
+    created_at?: number
+    author?: string,
+    username?: string,
+    article_id?: number,
     body: string,
-    article_id: number,
-    author: string,
-    votes: number,
-    created_at: string
 }

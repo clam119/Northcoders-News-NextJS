@@ -32,7 +32,24 @@ export async function fetchCommentsByArticleID (article_id: number, limit: numbe
 }
 
 export async function createCommentByArticleID (article_id: number, username: string, body: string) {
+    
+    // Checks to see if any of the parameters are undefined, if so return 404
+    if (username === undefined || body === undefined) {
+        return Promise.reject({ status: 404, msg: 'Missing Required Fields' })
+    }
 
+    // Checks the data type of parameters and rejects if not string
+    if (typeof username !== 'string' || typeof body !== 'string') {
+        return Promise.reject({ status: 400, msg: 'Invalid Fields Data' })
+    }
+
+    const createComment = await db.query(`INSERT INTO comments(author, body, article_id) VALUES ($1, $2, $3) RETURNING *;`,
+      [username, body, article_id]
+    )
+
+    const queryData = await createComment;
+    const { rows: [newCommentData] } =  queryData;
+    return newCommentData
 }
 
 export async function updateCommentByCommentID (comment_id: number, inc_votes: number) {
