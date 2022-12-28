@@ -19,7 +19,16 @@ export async function getCommentsByArticleID(req: NextApiRequest, res: NextApiRe
 }
 
 export async function postCommentByArticleID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { article_id } = req.query as { article_id: any };
+    const { body, username } = req.body;
+    const postedCommentData = await createCommentByArticleID(article_id, username, body )
+    try {
+        res.status(201)
+        .send(postedCommentData)
+    }
+    catch(err) {
+        console.log(err, 'An error has occurred in the postCommentByArticleID Comments Controller.')
+    }
 }
 
 export async function patchCommentByCommentID(req: NextApiRequest, res: NextApiResponse) {
