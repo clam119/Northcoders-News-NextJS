@@ -3,6 +3,7 @@ import seed from "@db/seeds/seed"
 import testData from "@db/data/test-data"
 import db from "@db/connection"
 import Comment from "@lib/commentsInterface"
+import handleComments from "@pages/api/comments";
 import handleArticleComments from "@pages/api/articles/[article_id]/comments"
 
 beforeAll(() => seed(testData));
@@ -124,6 +125,47 @@ describe('POST /api/articles/[article_id/comments', () => {
             expect(status).toBe(404);
             expect(msg).toBe("Missing Required Fields")
         }
+    })
+
+})
+
+describe('GET /api/comments', () => {
+
+    it('Should return a status code of 200 if a successful GET request is made.', async() => {
+        // Create Mock Request to /api/comments
+        const { req, res } = createMocks({
+            method: 'GET'
+        })
+        // Wait for the handleComments Function to resolve & check status code
+        await handleComments(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    it('Should return an array of comments that have the required fields of: body, votes, author, article_id', async() => {
+        const { req, res } = createMocks({
+            method: 'GET'
+        })
+        await handleComments(req, res);
+        const responseData = res._getData();
+        expect(Array.isArray(responseData)).toBe(true);
+        responseData.forEach((comment: Comment) => {
+            expect(comment).toMatchObject({
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                article_id: expect.any(Number),
+            })
+        })
+    })
+
+    it('Should return a default status code of 500 if an unavailable HTTP request is made.', async() => {
+        const { req, res } = createMocks({
+            method: 'POST'
+        })
+        await handleComments(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(500);
     })
 
 })
