@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Comment from "@lib/commentsInterface";
 import { 
+    fetchAllComments,
     fetchCommentsByArticleID, 
     createCommentByArticleID, 
     updateCommentByCommentID, 
@@ -28,6 +29,17 @@ export async function postCommentByArticleID(req: NextApiRequest, res: NextApiRe
     }
     catch(err) {
         console.log(err, 'An error has occurred in the postCommentByArticleID Comments Controller.')
+    }
+}
+
+export async function getAllComments(req: NextApiRequest, res: NextApiResponse) {
+    const allCommentsData = await fetchAllComments();
+    try {
+        res.status(200)
+        .send(allCommentsData)
+    }
+    catch(err) {
+        console.log(err, '< Error in /api/comments controller - getAllComments Function.')
     }
 }
 
