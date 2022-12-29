@@ -2,6 +2,12 @@ import db from "@db/connection";
 import Comment from "@lib/commentsInterface";
 import Article from "@lib/articlesInterface";
 
+export async function fetchAllComments() {
+    const queryData = await db.query(`SELECT * FROM comments`);
+    const { rows: allCommentsData } = queryData;
+    return allCommentsData
+}
+
 export async function fetchCommentsByArticleID (article_id: number, limit: number = 10, p: number = 1) {
     //If the passed in article ID exists - query and return the comments 
     let baseQuery = `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC LIMIT $2`
