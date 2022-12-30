@@ -44,7 +44,16 @@ export async function getAllComments(req: NextApiRequest, res: NextApiResponse) 
 }
 
 export async function patchCommentByCommentID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { comment_id } = req.query as { comment_id: any };
+    const { inc_votes } = req.body;
+    const singlePatchedComment = await updateCommentByCommentID(comment_id, inc_votes);
+    try {
+        res.status(200)
+        .send(singlePatchedComment)
+    }
+    catch(err) {
+        console.log(err, '< Error in /api/comments controller - patchCommentByCommentID Function.')
+    }
 }
 
 export async function deleteCommentByCommentID(req: NextApiRequest, res: NextApiResponse) {
