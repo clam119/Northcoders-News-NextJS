@@ -4,6 +4,7 @@ import {
     fetchAllComments,
     fetchCommentsByArticleID, 
     createCommentByArticleID, 
+    fetchCommentByCommentID,
     updateCommentByCommentID, 
     removeCommentByCommentID } from '@models/comments-model';
 
@@ -40,6 +41,18 @@ export async function getAllComments(req: NextApiRequest, res: NextApiResponse) 
     }
     catch(err) {
         console.log(err, '< Error in /api/comments controller - getAllComments Function.')
+    }
+}
+
+export async function getCommentByCommentID(req: NextApiRequest, res: NextApiResponse) {
+    const { comment_id } = req.query as { comment_id: any };
+    const singleCommentData = await fetchCommentByCommentID(comment_id);
+    try {
+        res.status(200)
+        .send(singleCommentData)
+    }
+    catch(err) {
+        console.log(err, '< Error in /api/comments/[comment_id] - getCommentByCommentID Controller Function')
     }
 }
 
