@@ -99,5 +99,18 @@ export async function updateCommentByCommentID (comment_id: number, inc_votes: n
 
 export async function removeCommentByCommentID (comment_id: number) {
 
+    // Query the Postgres Database to check existing comments & how many comments exist
+    const queryDbForComments = await db.query('SELECT * FROM comments;');
+    const existingComments = [...queryDbForComments.rows];
+    const numberOfExistingComments = existingComments.length;
+
+    // If the comment_id exceeds the number of comments that exist, return 404 as that comment does not exist
+    if (comment_id > numberOfExistingComments) {
+        return Promise.reject({ status: 404, msg: 'Comment with that ID not found'})
+    }
+    
+    await db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id]);
+    const successfulDelete = { status: 204, msg: `Successfully deleted comment with the ID of ${comment_id}`}
+    return successfulDelete
 }
 
