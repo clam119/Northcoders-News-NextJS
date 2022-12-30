@@ -70,5 +70,13 @@ export async function patchCommentByCommentID(req: NextApiRequest, res: NextApiR
 }
 
 export async function deleteCommentByCommentID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { comment_id } = req.query as { comment_id: any };
+    const singleDeletedComment = await removeCommentByCommentID(comment_id);
+    try {
+        res.status(204)
+        .send(singleDeletedComment)
+    }
+    catch(err) {
+        console.log(err, '< Error in /api/comments/[comment_id] controller - deleteCommentByCommentID Function.')
+    }
 }
