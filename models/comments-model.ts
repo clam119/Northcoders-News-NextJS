@@ -59,7 +59,25 @@ export async function createCommentByArticleID (article_id: number, username: st
 }
 
 export async function updateCommentByCommentID (comment_id: number, inc_votes: number) {
+    
+    // Query the Postgres Database to check existing comments & how many comments exist
+    const queryDbForComments = await db.query('SELECT * FROM comments;');
+    const existingComments = [...queryDbForComments.rows];
+    const numberOfExistingComments = existingComments.length;
 
+    // If the comment_id exceeds the number of comments that exist, return 404 as that comment does not exist
+    if (comment_id > numberOfExistingComments) {
+        return Promise.reject({ status: 404, msg: 'Comment with that ID not found'})
+    }
+
+    // If inc_votes or comment_id are not of type number or don't exist, return 400
+    if (typeof inc_votes !== 'number' || !inc_votes || !comment_id) {
+        return Promise.reject({ status: 400, msg: 'Invalid Fields Data' });
+    }
+
+    const patchComment = await db.query(`UPDATE comments SET votes = (votes + $1) WHERE comment_id = $2 RETURNING *;`, [inc_votes, comment_id])
+    const { rows: [singlePatchedComment] } = patchComment;
+    return singlePatchedComment;
 }
 
 export async function removeCommentByCommentID (comment_id: number) {
