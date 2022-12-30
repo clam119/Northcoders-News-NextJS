@@ -6,7 +6,7 @@ import Comment from "@lib/commentsInterface"
 import handleComments from "@pages/api/comments";
 import handleSingleComment from "@pages/api/comments/[comment_id]";
 import handleArticleComments from "@pages/api/articles/[article_id]/comments"
-import { updateCommentByCommentID } from "@models/comments-model";
+import { fetchCommentByCommentID, updateCommentByCommentID } from "@models/comments-model";
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());
@@ -170,6 +170,44 @@ describe('GET /api/comments', () => {
         expect(responseStatusCode).toBe(500);
     })
 
+})
+
+describe.only('GET /api/comments/[comment_id]', () => {
+
+    it('Should return a status code of 200 if a successful GET request is made.', async() => {
+        // Create a Mock Request to the /api/comments/[comment_id] endpoint
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { comment_id: 1 }
+        })
+        // Call the handleSingleComments Handler Function to handle GET Request
+        await handleSingleComment(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    it('Should return the comment passed with a valid comment_id of 1', async() => {
+        // Similar to previous tests - although the HTTP Request provides the valid response
+        // The test only provides the body upon res._getData()'s invocation
+        const responseData = await fetchCommentByCommentID(1);
+        expect(responseData).toMatchObject({
+            comment_id: 1,
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            article_id: 9,
+            author: "butter_bridge"
+        })
+    })
+
+    it('Should return a status code of 404 if a given comment_id is invalid.', async() => {
+        try {
+            await fetchCommentByCommentID(20000);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe("Comment with that ID not found")
+        }
+    })
 })
 
 describe('PATCH /api/comments/[comment_id]', () => {
