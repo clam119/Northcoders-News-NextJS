@@ -6,7 +6,7 @@ import Comment from "@lib/commentsInterface"
 import handleComments from "@pages/api/comments";
 import handleSingleComment from "@pages/api/comments/[comment_id]";
 import handleArticleComments from "@pages/api/articles/[article_id]/comments"
-import { fetchCommentByCommentID, updateCommentByCommentID } from "@models/comments-model";
+import { fetchCommentByCommentID, updateCommentByCommentID, removeCommentByCommentID } from "@models/comments-model";
 
 beforeAll(() => seed(testData));
 afterAll(() => db.end());
@@ -280,4 +280,42 @@ describe('PATCH /api/comments/[comment_id]', () => {
         }
     })
 
+})
+
+describe('DELETE /api/comments/[comment_id]', () => {
+
+    it('Should return a status code of 204 if a successful DELETE request is made.', async() => {
+        // Create a DELETE Request to the /api/comments/[comment_id] endpoint
+        const { req, res } = createMocks({
+            method: 'DELETE',
+            query: { comment_id: 5}
+        })
+        // Pass it through to the handleSingleComment Handler Function that passes the DELETE Request to Controller
+        await handleSingleComment(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(204);
+    })
+
+    it('Should return a custom status to inform the user of a successful delete operation.', async() => {
+        const { req, res } = createMocks({
+            method: 'DELETE',
+            query: { comment_id: 6 }
+        })
+        await handleSingleComment(req, res);
+        const responseData = res._getData();
+        const { status, msg } = responseData;
+        expect(status).toBe(204)
+        expect(msg).toBe("Successfully deleted comment with the ID of 6")
+    })
+
+    it('Should return a status code of 404 if a given comment_id is invalid.', async() => {
+        try {
+            await removeCommentByCommentID(20000);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe("Comment with that ID not found")
+        }
+    })
 })
