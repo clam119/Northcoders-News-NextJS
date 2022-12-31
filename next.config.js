@@ -63,9 +63,9 @@ const nextConfig = {
 
       {
         source: '/docs/comments/delete-comment-by-id',
-        destination: '/comments/delete-comment-by-id'
+        destination: '/comments/delete-comment-by-id.html'
       }
-      
+
     ]
   }
 }
