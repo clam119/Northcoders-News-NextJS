@@ -44,6 +44,27 @@ const nextConfig = {
         source: '/docs/articles-comments/post-articles-comments',
         destination: '/articles-comments/post-articles-comments.html'
       },
+
+      //Comments Rewrites
+      {
+        source: '/docs/comments/get-comments',
+        destination: '/comments/get-comments.html'
+      },
+
+      {
+        source: '/docs/comments/get-comment-by-id',
+        destination: '/comments/get-comment-by-id.html'
+      },
+
+      {
+        source: '/docs/comments/patch-comment-by-id',
+        destination: '/comments/patch-comment-by-id.html'
+      },
+
+      {
+        source: '/docs/comments/delete-comment-by-id',
+        destination: '/comments/delete-comment-by-id'
+      }
       
     ]
   }
