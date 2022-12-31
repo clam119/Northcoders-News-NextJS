@@ -64,8 +64,18 @@ const nextConfig = {
       {
         source: '/docs/comments/delete-comment-by-id',
         destination: '/comments/delete-comment-by-id.html'
-      }
+      },
+      //Topics Rewrites
+      {
+        source: '/docs/topics/get-topics',
+        destination: '/topics/get-topics.html'
+      },
 
+      {
+        source: '/docs/topics/post-topics',
+        destination: '/topics/post-topics.html'
+      }
+      
     ]
   }
 }
