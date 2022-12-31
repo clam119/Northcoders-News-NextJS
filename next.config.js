@@ -74,6 +74,22 @@ const nextConfig = {
       {
         source: '/docs/topics/post-topics',
         destination: '/topics/post-topics.html'
+      },
+      
+      //Users Rewrites
+      {
+        source: '/docs/users/get-users',
+        destination: '/users/get-users.html'
+      },
+
+      {
+        source: '/docs/users/get-users-by-username',
+        destination: '/users/get-users-by-username.html'
+      },
+
+      {
+        source: '/docs/users/post-user',
+        destination: '/users/post-user.html'
       }
       
     ]
