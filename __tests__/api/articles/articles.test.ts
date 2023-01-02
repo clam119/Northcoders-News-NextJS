@@ -163,7 +163,6 @@ describe('POST /api/articles', () => {
         //Call the handleArticles Handler Function to trigger the API Request
         await handleArticles(req, res);
         const responseData = res._getData()[0]
-        console.log(responseData)
         const numberOfProperties = Object.keys(responseData).length;
         //Expect the responseData to have 8 properties & the properties of: article_id, created_at, votes & comment_count
         expect(numberOfProperties).toBe(8);
