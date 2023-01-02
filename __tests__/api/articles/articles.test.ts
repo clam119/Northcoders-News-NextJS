@@ -122,7 +122,7 @@ describe('GET /api/articles', () => {
         }
     })
 
-    it('Should return a default status code of 500 if an unsupported HTTP method is made.', async() => {
+    it('Should return a default status code of 500 if an unsupported HTTP request is made.', async() => {
         const { req, res } = createMocks({
             method: 'DELETE',
         })
@@ -136,4 +136,45 @@ describe('GET /api/articles', () => {
         }
     })
 
+})
+
+describe.only('POST /api/articles', () => {
+
+    it('Should return a status code of 201 if a successful POST request is made.', async() => {
+        //Create a Mock POST Request to the /api/articles endpoint
+        const postRequest = { author: 'butter_bridge', topic: 'cats', title: 'How to Tackle Cat Allergies', body: 'Today I will talk about how to tackle Cat Allergies!' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            body: postRequest
+        })
+        //Call the handleArticles Handler Function to trigger the API Request
+        await handleArticles(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(201)
+    })
+
+    it('Should return the posted comment with the additional properties of: article_id, created_at, votes and comment_count.', async() => {
+        //Create a Mock POST Request to the /api/articles endpoint
+        const postRequest = { author: 'butter_bridge', topic: 'mitch', title: 'Mitchs Rare Treasures', body: 'Oh boy Mitch, you and your hidden rare treasures...' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            body: postRequest
+        })
+        //Call the handleArticles Handler Function to trigger the API Request
+        await handleArticles(req, res);
+        const responseData = res._getData();
+        const numberOfProperties = Object.keys(responseData).length;
+        //Expect the responseData to have 8 properties & the properties of: article_id, created_at, votes & comment_count
+        expect(numberOfProperties).toBe(8);
+        
+        //Expect the responseData to include all of the required properties below:
+        expect(responseData).toMatchObject({
+            ...postRequest,
+            article_id: expect.any(Number),
+            created_at: expect.any(Number),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number)
+        }) 
+    })
+    
 })
