@@ -21,7 +21,15 @@ export async function getAllArticles(req: NextApiRequest, res: NextApiResponse) 
 }
 
 export async function postNewArticle(req: NextApiRequest, res: NextApiResponse) {
-
+    const { author, title, body, topic  }: { author: string, title: string, topic: string, body: string } = req.body;
+    const postedArticleData = await createArticle(author, title, body, topic);
+    try {
+        res.status(201)
+        .send(postedArticleData)
+    }
+    catch(err) {
+        console.log(err, '< /api/articles - postNewArticle Controller Function Error.')
+    }
 }
 
 export async function getArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
