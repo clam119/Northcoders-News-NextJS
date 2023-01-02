@@ -210,4 +210,20 @@ describe.only('POST /api/articles', () => {
         }       
     })
 
+    it('Should return a status code of 400 if any of the parameters required in the body is not found.', async() => {
+        const invalidPostRequest = {}
+        const { req, res } = createMocks({
+            method: 'POST',
+            body: invalidPostRequest
+        })
+        try {
+            await handleArticles(req, res);
+        }
+        catch(err: any) {
+            const { msg, status } = err;
+            expect(msg).toBe('Missing Required Fields')
+            expect(status).toBe(400);
+        }
+    })
+
 })
