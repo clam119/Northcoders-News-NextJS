@@ -50,8 +50,15 @@ export async function fetchAllArticles (topic: string, sort_by: string = "create
 
 }
 
-export async function createArticle() {
-
+export async function createArticle(author: string, title: string, body: string, topic: string): Promise<Article | Error> {
+    
+    //Post Operation to Postgres DB - First this will return the original posted article without comment_count
+    const queryData = await db.query(`INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *;`, [author, title, body, topic]);
+    const { rows: newArticleData } = queryData;
+    //In order to append comment_count to the returned article data, a separate PSQL query that left joins is needed
+    const newArticleID = await newArticleData[0].article_id;
+    const { rows: newArticleWithCommentCount } =  await db.query(`SELECT articles.*, COUNT(comments.author) ::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`, [newArticleID]);
+    return newArticleWithCommentCount;
 }
 
 export async function fetchArticleByArticleID (article_id: number) {
