@@ -179,7 +179,19 @@ describe.only('POST /api/articles', () => {
     })
     
     it('Should return a status code of 404 & username not found - if the username in the body does not exist.', async() => {
-
+        const invalidPostRequest = { author: 'butter_bridges', topic: 'mitch', title: 'Mitchs Rare Treasures', body: 'Oh boy Mitch, you and your hidden rare treasures...' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            body: invalidPostRequest
+        })
+        try {
+            await handleArticles(req, res);
+        }
+        catch(err: any) {
+            const { msg, status } = err;
+            expect(msg).toBe('Username Not Found')
+            expect(status).toBe(404)
+        }       
     })
     
 })
