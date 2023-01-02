@@ -1,5 +1,7 @@
 import db from "@db/connection";
 import Article from "@lib/articlesInterface";
+import Topic from "@lib/topicsInterface";
+import { User } from "@lib/utilsInterface";
 
 export async function fetchAllArticles (topic: string, sort_by: string = "created_at", order: string = "DESC", limit: number = 10, p: number = 1)  {
     // Define a baseQuery that will be used to make queries to the Postgres DB
@@ -51,10 +53,33 @@ export async function fetchAllArticles (topic: string, sort_by: string = "create
 }
 
 export async function createArticle(author: string, title: string, body: string, topic: string): Promise<Article | Error> {
-    
+    //Initial DB Queries for Valid Usernames & Topics - Returns Array Of Usernames
+    const { rows: currentUsers } = await db.query('SELECT * FROM users;');
+    const { rows: currentTopics } = await db.query('SELECT * FROM topics');
+
+    //Get Valid Usernames & Topics By Mapping Respectively: Username & Slug
+    const validUsernames = currentUsers.map((user: User) => user.username);
+    const validTopics = currentTopics.map((topic: Topic) => topic.slug);
+   
+    //Conditional Check 1 - If any of the fields are missing then return a 
+    if(!author || !title || !body || !topic) {
+        return Promise.reject({ status: 400, msg: 'Missing Required Fields'})
+    }
+
+    //Conditional Check 2 - If the passed in "Author" aka "Username" does not exist, then throw a 404 username not found
+    if(!validUsernames.includes(author)) {
+        return Promise.reject({ status: 404, msg: 'Username Not Found' });
+    }
+
+    // Conditional Check 3 - If the passed in "Topic" does not exist, then throw a 404 topic not found 
+    if(!validTopics.includes(topic)) {
+        return Promise.reject({ status: 404, msg: 'Topic Not Found' });
+    }
+
     //Post Operation to Postgres DB - First this will return the original posted article without comment_count
     const queryData = await db.query(`INSERT INTO articles (author, title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *;`, [author, title, body, topic]);
     const { rows: newArticleData } = queryData;
+    
     //In order to append comment_count to the returned article data, a separate PSQL query that left joins is needed
     const newArticleID = await newArticleData[0].article_id;
     const { rows: newArticleWithCommentCount } =  await db.query(`SELECT articles.*, COUNT(comments.author) ::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id;`, [newArticleID]);
