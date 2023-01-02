@@ -138,7 +138,7 @@ describe('GET /api/articles', () => {
 
 })
 
-describe.only('POST /api/articles', () => {
+describe('POST /api/articles', () => {
 
     it('Should return a status code of 201 if a successful POST request is made.', async() => {
         //Create a Mock POST Request to the /api/articles endpoint
