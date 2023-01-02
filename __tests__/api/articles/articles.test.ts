@@ -193,5 +193,21 @@ describe.only('POST /api/articles', () => {
             expect(status).toBe(404)
         }       
     })
-    
+
+    it('Should return a status code of 404 & topic not found - if the topic in the body does not exist.', async() => {
+        const invalidPostRequest = { author: 'butter_bridge', topic: 'mitchs', title: 'Mitchs Rare Treasures', body: 'Oh boy Mitch, you and your hidden rare treasures...' }
+        const { req, res } = createMocks({
+            method: 'POST',
+            body: invalidPostRequest
+        })
+        try {
+            await handleArticles(req, res);
+        }
+        catch(err: any) {
+            const { msg, status } = err;
+            expect(msg).toBe('Topic Not Found')
+            expect(status).toBe(404)
+        }       
+    })
+
 })
