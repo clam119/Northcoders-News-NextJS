@@ -162,7 +162,8 @@ describe.only('POST /api/articles', () => {
         })
         //Call the handleArticles Handler Function to trigger the API Request
         await handleArticles(req, res);
-        const responseData = res._getData();
+        const responseData = res._getData()[0]
+        console.log(responseData)
         const numberOfProperties = Object.keys(responseData).length;
         //Expect the responseData to have 8 properties & the properties of: article_id, created_at, votes & comment_count
         expect(numberOfProperties).toBe(8);
@@ -171,10 +172,14 @@ describe.only('POST /api/articles', () => {
         expect(responseData).toMatchObject({
             ...postRequest,
             article_id: expect.any(Number),
-            created_at: expect.any(Number),
+            created_at: expect.any(Date),
             votes: expect.any(Number),
             comment_count: expect.any(Number)
         }) 
+    })
+    
+    it('Should return a status code of 404 & username not found - if the username in the body does not exist.', async() => {
+
     })
     
 })
