@@ -5,6 +5,7 @@ import db from "@db/connection"
 import Article from "@lib/articlesInterface";
 import handleArticles from "@pages/api/articles";
 import handleArticlesByArticleID from "@pages/api/articles/[article_id]";
+import { fetchArticleByArticleID } from "@models/articles-model";
 
 // Before test suite re-seed database and once finished end connection to PSQL database.
 beforeAll(() => seed(testData));
@@ -222,6 +223,55 @@ describe('POST /api/articles', () => {
             const { msg, status } = err;
             expect(msg).toBe('Missing Required Fields')
             expect(status).toBe(400);
+        }
+    })
+
+})
+
+describe('GET /api/articles/[article_id]', () => {
+
+    it('Should return a status code of 200 if a successful GET request is made.', async() => {
+        //Create a Mock Request to the /api/articles/[article_id] endpoint for article 1
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { article_id: 1 }
+        })
+        //Invoke the handleArticlesByArticleID Handler Function to manage the HTTP Request
+        await handleArticlesByArticleID(req, res);
+        
+        //Check the status code and expect 200
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    it('Should return the queried article with the article_id of 1.', async() => {
+        //Invoke the fetchArticleByArticleID Model Function - This is because the
+        //Data retrieved by the handler does not include the entire object & only body
+        const responseData = await fetchArticleByArticleID(1);
+        expect(responseData).toMatchObject({
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            votes: 100
+          })
+    })
+
+    it('Should return a status code of 404 if the queried article does not exist.', async() => {
+        //Create a Mock Request to the /api/articles/[article_id] endpoint w/ non-existent article_id
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { article_id: 9999999 }
+        })
+        //Pass the non-existent article_id mock call to the below handler in a try/catch block
+        try {
+            await handleArticlesByArticleID(req, res);
+        }
+        catch(err: any) {
+            const { msg, status } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe('Article with that ID not found.')
         }
     })
 
