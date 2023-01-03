@@ -87,7 +87,10 @@ export async function createArticle(author: string, title: string, body: string,
 }
 
 export async function fetchArticleByArticleID (article_id: number) {
-
+    //Initial DB query for the queried article
+    const fetchArticle = await db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]);
+    const { rows: [singleArticleData] } = fetchArticle;
+    return singleArticleData;
 }
 
 export async function updateArticleByArticleID (article_id:number , inc_votes: number) {
