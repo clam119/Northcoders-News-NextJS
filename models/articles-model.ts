@@ -87,6 +87,17 @@ export async function createArticle(author: string, title: string, body: string,
 }
 
 export async function fetchArticleByArticleID (article_id: number) {
+
+    // Query the Postgres Database to check existing articles & how many articles exist
+    const queryDbForArticles = await db.query('SELECT * FROM comments;');
+    const existingArticles = [...queryDbForArticles.rows];
+    const numberOfExistingArticles = existingArticles.length;
+
+    // If the comment_id exceeds the number of comments that exist, return 404 as that comment does not exist
+    if (article_id > numberOfExistingArticles) {
+        return Promise.reject({ status: 404, msg: 'Article with that ID not found.'})
+    }
+
     //Initial DB query for the queried article
     const fetchArticle = await db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id]);
     const { rows: [singleArticleData] } = fetchArticle;
