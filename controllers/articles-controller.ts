@@ -33,7 +33,15 @@ export async function postNewArticle(req: NextApiRequest, res: NextApiResponse) 
 }
 
 export async function getArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { article_id } = req.query as { article_id: any }
+    const singleArticleData = await fetchArticleByArticleID(article_id);
+    try {
+        res.status(200)
+        .send(singleArticleData);
+    }
+    catch(err) {
+        console.log(err, '< /api/articles/[article_id] - getArtlceByArticleID Controller Function Error.')
+    }
 }
 
 export async function patchArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
