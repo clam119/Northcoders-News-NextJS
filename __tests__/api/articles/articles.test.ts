@@ -226,3 +226,22 @@ describe('POST /api/articles', () => {
     })
 
 })
+
+describe('GET /api/articles/[article_id]', () => {
+
+    it('Should return a status code of 200 if a successful GET request is made.', async() => {
+        //Create a Mock Request to the /api/articles/[article_id] endpoint for article 1
+        const { req, res } = createMocks({
+            method: 'GET',
+            query: { article_id: 1 }
+        })
+        //Invoke the handleArticlesByArticleID Handler Function to manage the HTTP Request
+        await handleArticlesByArticleID(req, res);
+        
+        //Check the status code and expect 200
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    
+})
