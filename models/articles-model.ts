@@ -106,6 +106,25 @@ export async function fetchArticleByArticleID (article_id: number) {
 
 export async function updateArticleByArticleID (article_id:number , inc_votes: number) {
 
+        // Query the Postgres Database to check existing articles & how many articles exist
+        const queryDbForArticles = await db.query('SELECT * FROM articles;');
+        const existingArticles = [...queryDbForArticles.rows];
+        const numberOfExistingArticles = existingArticles.length;
+    
+        // If the comment_id exceeds the number of articles that exist, return 404 as that comment does not exist
+        if (article_id > numberOfExistingArticles) {
+            return Promise.reject({ status: 404, msg: 'Article with that ID not found'})
+        }
+    
+        // If inc_votes or article_id are not of type number or don't exist, return 400
+        if (typeof inc_votes !== 'number' || !inc_votes || !article_id) {
+            return Promise.reject({ status: 400, msg: 'Invalid Fields Data' });
+        }
+    
+        const patchArticle = await db.query(`UPDATE articles SET votes = (votes + $1) WHERE article_id = $2 RETURNING *;`, [inc_votes, article_id])
+        const { rows: [singlePatchedArticle] } = patchArticle;
+        return singlePatchedArticle;
+
 }
 
 export async function removeArticleByArticleID (article_id: number) {
