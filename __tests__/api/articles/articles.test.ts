@@ -288,16 +288,13 @@ describe('PATCH /api/articles/[article_id]', () => {
             query: { article_id: 2 },
             body: patchRequestBody
         })
-        // Wait for the handleSingleComment Function to resolve & check status code
+        // Wait for the handleArticlesByArticleID Function to resolve & check status code
         await handleArticlesByArticleID(req, res);
         const responseStatusCode = res._getStatusCode();
         expect(responseStatusCode).toBe(200);
     })
 
-    it('Should return with the updated comment with the votes increased by 50', async() => {
-        /* As the createMocks Response Data only returns the body,
-        following tests will use the model functions. However,
-        the requests themselves do function normally.*/
+    it('Should return with the updated article with the votes increased by 50', async() => {
         const patchRequest = await updateArticleByArticleID(1, 50)
         expect(patchRequest).toMatchObject({
             article_id: 1,
@@ -309,7 +306,7 @@ describe('PATCH /api/articles/[article_id]', () => {
         })
     })
 
-    it('Should return with the updated comment with the votes decreased by 50', async() => {
+    it('Should return with the updated article with the votes decreased by 50', async() => {
         const patchRequest = await updateArticleByArticleID(3, -50)
         expect(patchRequest).toMatchObject({
             article_id: 3,
@@ -325,7 +322,7 @@ describe('PATCH /api/articles/[article_id]', () => {
         const patchRequestBody = { inc_votes: "I'm an invalid data type!" };
         const { req, res } = createMocks({
             method: 'PATCH',
-            query: { comment_id: 1 },
+            query: { article_id: 1 },
             body: patchRequestBody
         })
         try {
@@ -338,14 +335,14 @@ describe('PATCH /api/articles/[article_id]', () => {
         }
     })
     
-    it('Should return a status code of 404 if a given Comment_ID is invalid.', async() => {
+    it('Should return a status code of 404 if a given Article_ID is invalid.', async() => {
         try {
             await updateArticleByArticleID(20000, 10)
         }
         catch(err: any) {
             const { status, msg } = err;
             expect(status).toBe(404);
-            expect(msg).toBe("Comment with that ID not found")
+            expect(msg).toBe("Article with that ID not found")
         }
     })
 
