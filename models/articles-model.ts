@@ -128,5 +128,26 @@ export async function updateArticleByArticleID (article_id:number , inc_votes: n
 }
 
 export async function removeArticleByArticleID (article_id: number) {
+
+        // Query the Postgres Database to check existing articles & how many articles exist
+        const queryDbForArticles = await db.query('SELECT * FROM articles;');
+        const existingArticles = [...queryDbForArticles.rows];
+        const numberOfExistingArticles = existingArticles.length;
     
+        // If the comment_id exceeds the number of articles that exist, return 404 as that comment does not exist
+        if (article_id > numberOfExistingArticles) {
+            return Promise.reject({ status: 404, msg: 'Article with that ID not found'})
+        }
+
+        // Initially delete all of the comments with the passed article_id to avoid PSQL Foreign Key constraint errors
+        await db.query(`DELETE FROM comments WHERE article_id = $1`, [article_id])
+        
+        // Once the comments with that ID are deleted will you be able to delete the article_id because there's no other tables relying on that article_id
+        await db.query(`DELETE FROM articles WHERE articles.article_id = $1`, [article_id]);
+
+        // Upon successful delete, return custom status & msg
+        const successfulDelete = { status: 204, msg: `Successfully deleted article with the ID of ${article_id}`}
+        return successfulDelete
 }
+
+`SELECT articles.*, COUNT(comments.author) as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;

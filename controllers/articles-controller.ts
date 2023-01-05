@@ -58,5 +58,13 @@ export async function patchArticleByArticleID(req: NextApiRequest, res: NextApiR
 }
 
 export async function deleteArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { article_id } = req.query as { article_id: any }
+    const singleDeletedArticle = await removeArticleByArticleID(article_id);
+    try {
+        res.status(204)
+        .send(singleDeletedArticle);
+    }
+    catch(err) {
+        console.log(err, '< /api/articles/[article_id] - deleteArticleByArticleID Controller Function Error.')
+    }
 }

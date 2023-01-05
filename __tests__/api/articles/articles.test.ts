@@ -5,7 +5,7 @@ import db from "@db/connection"
 import Article from "@lib/articlesInterface";
 import handleArticles from "@pages/api/articles";
 import handleArticlesByArticleID from "@pages/api/articles/[article_id]";
-import { fetchArticleByArticleID, updateArticleByArticleID } from "@models/articles-model";
+import { fetchArticleByArticleID, removeArticleByArticleID, updateArticleByArticleID } from "@models/articles-model";
 
 // Before test suite re-seed database and once finished end connection to PSQL database.
 beforeAll(() => seed(testData));
@@ -346,4 +346,42 @@ describe('PATCH /api/articles/[article_id]', () => {
         }
     })
 
+})
+
+describe('DELETE /api/articles/[article_id]', () => {
+
+    it('Should return a status code of 204 if a successful DELETE request is made.', async() => {
+        // Create a DELETE Request to the /api/articles/[article_id] endpoint
+        const { req, res } = createMocks({
+            method: 'DELETE',
+            query: { article_id: 5}
+        })
+        // Pass it through to the handleArticlesByArticleID Handler Function that passes the DELETE Request to Controller
+        await handleArticlesByArticleID(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(204);
+    })
+
+    it('Should return a custom status to inform the user of a successful delete operation.', async() => {
+        const { req, res } = createMocks({
+            method: 'DELETE',
+            query: { article_id: 6 }
+        })
+        await handleArticlesByArticleID(req, res);
+        const responseData = res._getData();
+        const { status, msg } = responseData;
+        expect(status).toBe(204)
+        expect(msg).toBe("Successfully deleted article with the ID of 6")
+    })
+
+    it('Should return a status code of 404 if a given article_id is invalid.', async() => {
+        try {
+            await removeArticleByArticleID(20000);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe("Article with that ID not found")
+        }
+    })
 })
