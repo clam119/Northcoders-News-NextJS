@@ -5,7 +5,7 @@ import db from "@db/connection"
 import Article from "@lib/articlesInterface";
 import handleArticles from "@pages/api/articles";
 import handleArticlesByArticleID from "@pages/api/articles/[article_id]";
-import { fetchArticleByArticleID } from "@models/articles-model";
+import { fetchArticleByArticleID, updateArticleByArticleID } from "@models/articles-model";
 
 // Before test suite re-seed database and once finished end connection to PSQL database.
 beforeAll(() => seed(testData));
@@ -272,6 +272,80 @@ describe('GET /api/articles/[article_id]', () => {
             const { msg, status } = err;
             expect(status).toBe(404);
             expect(msg).toBe('Article with that ID not found.')
+        }
+    })
+
+})
+
+describe('PATCH /api/articles/[article_id]', () => {
+
+    it('Should return a status code of 200 if a successful PATCH request is made.', async() => {
+        // Create Mock Request to /api/articles/[article_id]
+        // Create the Request Body being sent to PATCH request
+        const patchRequestBody = { inc_votes: 1 }
+        const { req, res } = createMocks({
+            method: 'PATCH',
+            query: { article_id: 2 },
+            body: patchRequestBody
+        })
+        // Wait for the handleSingleComment Function to resolve & check status code
+        await handleArticlesByArticleID(req, res);
+        const responseStatusCode = res._getStatusCode();
+        expect(responseStatusCode).toBe(200);
+    })
+
+    it('Should return with the updated comment with the votes increased by 50', async() => {
+        /* As the createMocks Response Data only returns the body,
+        following tests will use the model functions. However,
+        the requests themselves do function normally.*/
+        const patchRequest = await updateArticleByArticleID(1, 50)
+        expect(patchRequest).toMatchObject({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            votes: 150,
+        })
+    })
+
+    it('Should return with the updated comment with the votes decreased by 50', async() => {
+        const patchRequest = await updateArticleByArticleID(3, -50)
+        expect(patchRequest).toMatchObject({
+            article_id: 3,
+            title: "Eight pug gifs that remind me of mitch",
+            topic: "mitch",
+            author: "icellusedkars",
+            body: "some gifs",
+            votes: -50,
+        })
+    })
+
+    it('Should return a status code of 400 if any of the fields are an invalid data type', async() => {
+        const patchRequestBody = { inc_votes: "I'm an invalid data type!" };
+        const { req, res } = createMocks({
+            method: 'PATCH',
+            query: { comment_id: 1 },
+            body: patchRequestBody
+        })
+        try {
+            await handleArticlesByArticleID(req, res);
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(400);
+            expect(msg).toBe('Invalid Fields Data')
+        }
+    })
+    
+    it('Should return a status code of 404 if a given Comment_ID is invalid.', async() => {
+        try {
+            await updateArticleByArticleID(20000, 10)
+        }
+        catch(err: any) {
+            const { status, msg } = err;
+            expect(status).toBe(404);
+            expect(msg).toBe("Comment with that ID not found")
         }
     })
 
