@@ -40,12 +40,21 @@ export async function getArticleByArticleID(req: NextApiRequest, res: NextApiRes
         .send(singleArticleData);
     }
     catch(err) {
-        console.log(err, '< /api/articles/[article_id] - getArtlceByArticleID Controller Function Error.')
+        console.log(err, '< /api/articles/[article_id] - getArticleByArticleID Controller Function Error.')
     }
 }
 
 export async function patchArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
-
+    const { article_id } = req.query as { article_id: any }
+    const { inc_votes } = req.body
+    const singleArticleData = await updateArticleByArticleID(article_id, inc_votes);
+    try {
+        res.status(200)
+        .send(singleArticleData);
+    }
+    catch(err) {
+        console.log(err, '< /api/articles/[article_id] - patchArticleByArticleID Controller Function Error.')
+    }
 }
 
 export async function deleteArticleByArticleID(req: NextApiRequest, res: NextApiResponse) {
