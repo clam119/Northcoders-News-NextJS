@@ -149,5 +149,3 @@ export async function removeArticleByArticleID (article_id: number) {
         const successfulDelete = { status: 204, msg: `Successfully deleted article with the ID of ${article_id}`}
         return successfulDelete
 }
-
-`SELECT articles.*, COUNT(comments.author) as comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id`;
